@@ -1,0 +1,150 @@
+.stats-card {
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0ea5e9, #10b981);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card:hover::before {
+  opacity: 1;
+}
+
+.stats-card-blue::before {
+  background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+}
+
+.stats-card-green::before {
+  background: linear-gradient(90deg, #10b981, #14b8a6);
+}
+
+.stats-card-warning::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.stats-card-danger::before {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.stats-card-warning {
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.stats-card-danger {
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9;
+}
+
+.stats-card-green .card-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stats-card-warning .card-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.stats-card-danger .card-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.card-value {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.unit {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.trend.positive {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.trend.negative {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.trend svg {
+  width: 16px;
+  height: 16px;
+}
+
+.stats-card-danger .trend {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}

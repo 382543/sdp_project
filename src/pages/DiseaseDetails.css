@@ -1,0 +1,518 @@
+.disease-details {
+  flex: 1;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+  color: #fff;
+  min-height: 100%;
+}
+
+.disease-header {
+  margin-bottom: 50px;
+}
+
+.disease-header .eyebrow {
+  color: #0ea5e9;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.disease-header h1 {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #0ea5e9, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.disease-header p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.disease-container {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+/* Stage Animation Section */
+.stage-animation {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 28px;
+  backdrop-filter: blur(10px);
+}
+
+.stage-animation h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.stage-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.05fr) minmax(0, 0.95fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.kidney-visualization {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.kidney-strip {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 240px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.kidney-strip-transparent {
+  background: transparent;
+}
+
+.kidney-card {
+  width: 220px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kidney-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.kidney-card:hover,
+.kidney-card.is-active {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.kidney-card:hover::before,
+.kidney-card.is-active::before {
+  opacity: 1;
+}
+
+.kidney-card.is-dimmed {
+  filter: saturate(0.85) opacity(0.88);
+}
+
+.kidney-card-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.kidney-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.kidney-caption strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.65);
+}
+
+.kidney-caption span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.55);
+}
+
+.kidney-svg {
+  width: 100%;
+  max-width: 100%;
+}
+
+.kidney-cartoon-svg {
+  overflow: visible;
+}
+
+.kidney-cartoon-figure {
+  animation: kidneyFloat 4.2s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+.kidney-card.is-active .kidney-cartoon-figure {
+  animation: kidneyFloatActive 3.2s ease-in-out infinite;
+}
+
+.kidney-card .kidney-cartoon-figure path,
+.kidney-card .kidney-cartoon-figure ellipse,
+.kidney-card .kidney-cartoon-figure circle,
+.kidney-card .kidney-cartoon-figure rect {
+  transition: all 0.25s ease;
+}
+
+.kidney-card .kidney-cartoon-figure {
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.08));
+}
+
+.kidney-card.is-active .kidney-cartoon-figure {
+  filter: drop-shadow(0 6px 14px rgba(14, 165, 233, 0.2));
+}
+
+.kidney-card .mood-healthy {
+  animation-delay: 0s;
+}
+
+.kidney-card .mood-mild {
+  animation-delay: 0.25s;
+}
+
+.kidney-card .mood-severe {
+  animation-delay: 0.5s;
+}
+
+/* Stage Buttons */
+.stage-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.stage-btn {
+  padding: 10px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.stage-btn:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.stage-btn.active {
+  color: #fff;
+  border-color: currentColor;
+}
+
+/* Stage Details */
+.stage-details {
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 0;
+}
+
+.stage-info h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.gfr-badge {
+  display: inline-block;
+  background: rgba(14, 165, 233, 0.3);
+  color: #0ea5e9;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.stage-description {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.symptoms {
+  margin-top: 20px;
+}
+
+.symptoms h4 {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.symptoms ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.symptoms li {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #0ea5e9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Risk Factors */
+.risk-factors {
+  margin-top: 40px;
+}
+
+.risk-factors h2 {
+  font-size: 28px;
+  margin-bottom: 18px;
+  color: #fff;
+}
+
+.factors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.factor-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 18px 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  min-height: 132px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.factor-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-5px);
+}
+
+.factor-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.factor-card h4 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.factor-card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.risk-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.risk-badge.risk-very-high {
+  background: rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+}
+
+.risk-badge.risk-high {
+  background: rgba(249, 115, 22, 0.3);
+  color: #fed7aa;
+}
+
+.risk-badge.risk-medium {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fef3c7;
+}
+
+@media (max-width: 1100px) {
+  .factors-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Prevention Tips */
+.prevention-tips {
+  margin-top: 40px;
+}
+
+.prevention-tips h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.tip-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(14, 165, 233, 0.15) 100%);
+}
+
+.tip-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #0ea5e9, #10b981);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.tip-card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.tip-card p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+/* Notice */
+.notice {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 40px;
+  border-left: 4px solid #eab308;
+}
+
+.notice h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #fef08a;
+}
+
+.notice p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .disease-details {
+    padding: 24px;
+  }
+
+  .disease-header h1 {
+    font-size: 28px;
+  }
+
+  .stage-animation {
+    padding: 24px;
+  }
+
+  .stage-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .kidney-strip {
+    min-height: 200px;
+    padding: 4px 0;
+  }
+
+  .kidney-card {
+    width: 220px;
+  }
+
+  .factors-grid,
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .symptoms ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes kidneyFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.01);
+  }
+}
+
+@keyframes kidneyFloatActive {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.04);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.07);
+  }
+}
