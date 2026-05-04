@@ -73,6 +73,20 @@
   animation: fadeIn 0.6s ease-out;
 }
 
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
@@ -81,6 +95,11 @@
   .app-container.sidebar-open,
   .app-container.sidebar-closed {
     padding-left: 0;
+  }
+
+  .sidebar-overlay.visible {
+    display: block;
+    opacity: 1;
   }
 
   .main-content {

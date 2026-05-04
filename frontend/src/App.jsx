@@ -11,11 +11,15 @@ import Analysis from './pages/Analysis'
 import DiseaseDetails from './pages/DiseaseDetails'
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768)
 
   return (
     <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={sidebarOpen} />
+      <div 
+        className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`} 
+        onClick={() => setSidebarOpen(false)}
+      />
       <div className="main-content">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         <div className="page-content">
