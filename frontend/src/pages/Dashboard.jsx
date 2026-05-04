@@ -294,7 +294,7 @@ export default function Dashboard() {
 
         <aside className="assessment-result-card">
           <div className="card-heading">
-            <h2>Risk Verdict</h2>
+            <h2>Risk Predict</h2>
             <span>Updated from the current values</span>
           </div>
 
