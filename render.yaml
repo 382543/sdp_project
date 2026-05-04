@@ -1,14 +1,11 @@
 services:
-  # 1. FastAPI Backend Service
   - type: web
-    name: ckd-backend
+    name: ckd-platform-fullstack
     env: python
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
-    
-  # 2. React Frontend Static Site
-  - type: web
-    name: ckd-frontend
-    env: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    buildCommand: "bash build.sh"
+    startCommand: "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: NODE_VERSION
+        value: 20.10.0
