@@ -179,3 +179,20 @@
 .sidebar.closed .logout-btn {
   justify-content: center;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px; /* Always full width on mobile when open */
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Prevent 'closed' style on mobile since we just hide it entirely */
+  .sidebar.closed {
+    width: 280px;
+    padding: 24px 16px;
+  }
+}

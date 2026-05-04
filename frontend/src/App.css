@@ -3,7 +3,15 @@
   min-height: 100vh;
   background: linear-gradient(140deg, #eef3f2 0%, #e8efee 54%, #e5efed 100%);
   position: relative;
+  transition: padding-left 0.3s ease;
+}
+
+.app-container.sidebar-open {
   padding-left: 280px;
+}
+
+.app-container.sidebar-closed {
+  padding-left: 80px;
 }
 
 .app-container::before {
@@ -68,6 +76,11 @@
 @media (max-width: 768px) {
   .app-container {
     flex-direction: column;
+  }
+  
+  .app-container.sidebar-open,
+  .app-container.sidebar-closed {
+    padding-left: 0;
   }
 
   .main-content {

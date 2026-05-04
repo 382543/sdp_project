@@ -14,7 +14,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={sidebarOpen} />
       <div className="main-content">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
