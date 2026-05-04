@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, AlertTriangle, CheckCircle2, ShieldAlert } from 'lucide-react'
+import { Activity, AlertTriangle, CheckCircle2, ShieldAlert, Loader2 } from 'lucide-react'
 import { predictRisk } from '../lib/ckdApi'
 import { saveLatestPrediction } from '../lib/predictionStore'
 import './Dashboard.css'
@@ -150,8 +150,8 @@ export default function Dashboard() {
       return () => controller.abort()
     }
 
+    setIsAssessing(true)
     const timeoutId = window.setTimeout(async () => {
-      setIsAssessing(true)
       try {
         const backendResult = await predictRisk(normalizedForm, controller.signal)
         setAssessment(backendResult)
@@ -177,7 +177,7 @@ export default function Dashboard() {
       } finally {
         setIsAssessing(false)
       }
-    }, 150)
+    }, 600)
 
     return () => {
       controller.abort()
@@ -278,14 +278,29 @@ export default function Dashboard() {
           </div>
 
           <div className="form-actions">
-            <button type="button" className="btn-assess" onClick={() => setRefreshToken((value) => value + 1)}>
-              <span>Assess Risk</span>
-              <span className="btn-icon">→</span>
+            <button 
+              type="button" 
+              className="btn-assess" 
+              onClick={() => setRefreshToken((value) => value + 1)}
+              disabled={isAssessing}
+            >
+              {isAssessing ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <span>Assess Risk</span>
+                  <span className="btn-icon">→</span>
+                </>
+              )}
             </button>
             <button
               type="button"
               className="btn-reset"
               onClick={() => setForm(initialForm)}
+              disabled={isAssessing}
             >
               Reset
             </button>
@@ -298,43 +313,52 @@ export default function Dashboard() {
             <span>Updated from the current values</span>
           </div>
 
-          <div className={`verdict verdict-${assessment.riskLevel.toLowerCase()}`}>
-            {assessment.riskLevel === 'Low' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
-            <div>
-              <strong>{assessment.riskState}</strong>
-              <span>{assessment.riskLevel} CKD risk</span>
+          {isAssessing ? (
+            <div className="assessment-loading-state" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0', gap: '16px', color: '#64748b' }}>
+              <Loader2 className="animate-spin" size={48} color="#0f766e" />
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>Processing your risk...</p>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className={`verdict verdict-${assessment.riskLevel.toLowerCase()}`}>
+                {assessment.riskLevel === 'Low' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
+                <div>
+                  <strong>{assessment.riskState}</strong>
+                  <span>{assessment.riskLevel} CKD risk</span>
+                </div>
+              </div>
 
-          <div className="risk-meter-block">
-            <div className="risk-meter-label">
-              <span>Risk score</span>
-              <strong>{assessment.score}%</strong>
-            </div>
-            <div className="risk-meter-track">
-              <div className={`risk-meter-fill verdict-${assessment.riskLevel.toLowerCase()}`} style={{ width: `${assessment.score}%` }} />
-            </div>
-          </div>
+              <div className="risk-meter-block">
+                <div className="risk-meter-label">
+                  <span>Risk score</span>
+                  <strong>{assessment.score}%</strong>
+                </div>
+                <div className="risk-meter-track">
+                  <div className={`risk-meter-fill verdict-${assessment.riskLevel.toLowerCase()}`} style={{ width: `${assessment.score}%` }} />
+                </div>
+              </div>
 
-          <div className="result-summary">
-            <div className="result-badge">
-              {assessment.riskLevel === 'Low' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
-              <span>{assessment.riskLevel}</span>
-            </div>
+              <div className="result-summary">
+                <div className="result-badge">
+                  {assessment.riskLevel === 'Low' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
+                  <span>{assessment.riskLevel}</span>
+                </div>
 
-            <div className="result-text">
-              <h3>{assessment.signals.length ? 'Key signals' : 'No major CKD signals detected'}</h3>
-              {assessment.signals.length ? (
-                <ul>
-                  {assessment.signals.map((signal) => (
-                    <li key={signal}>{signal}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>The current values do not cross the simple risk thresholds in this dashboard.</p>
-              )}
-            </div>
-          </div>
+                <div className="result-text">
+                  <h3>{assessment.signals.length ? 'Key signals' : 'No major CKD signals detected'}</h3>
+                  {assessment.signals.length ? (
+                    <ul>
+                      {assessment.signals.map((signal) => (
+                        <li key={signal}>{signal}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>The current values do not cross the simple risk thresholds in this dashboard.</p>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </aside>
       </div>
 
