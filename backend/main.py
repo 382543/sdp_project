@@ -52,17 +52,17 @@ class RiskResponse(BaseModel):
 def get_ckd_stage(egfr: float) -> tuple[str, str, str]:
     """Return (stage_code, stage_label, stage_description) based on eGFR."""
     if egfr >= 90:
-        return "G1", "Stage G1", "Normal or high kidney function (eGFR ≥ 90)"
+        return "G1", "Stage 1", "Normal or high kidney function (eGFR ≥ 90)"
     elif egfr >= 60:
-        return "G2", "Stage G2", "Mildly decreased kidney function (eGFR 60–89)"
+        return "G2", "Stage 2", "Mildly decreased kidney function (eGFR 60–89)"
     elif egfr >= 45:
-        return "G3a", "Stage G3a", "Mildly to moderately decreased (eGFR 45–59)"
+        return "G3a", "Stage 3a", "Mildly to moderately decreased (eGFR 45–59)"
     elif egfr >= 30:
-        return "G3b", "Stage G3b", "Moderately to severely decreased (eGFR 30–44)"
+        return "G3b", "Stage 3b", "Moderately to severely decreased (eGFR 30–44)"
     elif egfr >= 15:
-        return "G4", "Stage G4", "Severely decreased kidney function (eGFR 15–29)"
+        return "G4", "Stage 4", "Severely decreased kidney function (eGFR 15–29)"
     else:
-        return "G5", "Stage G5", "Kidney failure / End-stage renal disease (eGFR < 15)"
+        return "G5", "Stage 5", "Kidney failure / End-stage renal disease (eGFR < 15)"
 
 
 def assess_ckd_risk(form: RiskRequest) -> dict[str, Any]:
