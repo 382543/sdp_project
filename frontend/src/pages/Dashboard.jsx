@@ -35,103 +35,13 @@ function normalizeForm(form) {
   }
 }
 
-function assessCkdRisk(form) {
-  const signals = []
-  let score = 0
-
-  if (form.egfr < 15) {
-    score += 6
-    signals.push('eGFR is critically low.')
-  } else if (form.egfr < 30) {
-    score += 5
-    signals.push('eGFR is in a severe range.')
-  } else if (form.egfr < 45) {
-    score += 4
-    signals.push('eGFR suggests reduced kidney function.')
-  } else if (form.egfr < 60) {
-    score += 3
-    signals.push('eGFR is below the healthy threshold.')
-  }
-
-  if (form.creatinine_rate >= 1.8) {
-    score += 4
-    signals.push('Creatinine is markedly elevated.')
-  } else if (form.creatinine_rate >= 1.4) {
-    score += 3
-    signals.push('Creatinine is above the usual range.')
-  } else if (form.creatinine_rate >= 1.2) {
-    score += 2
-    signals.push('Creatinine is slightly elevated.')
-  }
-
-  if (form.glucose >= 200) {
-    score += 3
-    signals.push('Glucose is very high.')
-  } else if (form.glucose >= 140) {
-    score += 2
-    signals.push('Glucose is above the target range.')
-  }
-
-  if (form.diabetes === 'yes') {
-    score += 2
-    signals.push('Diabetes increases CKD risk.')
-  }
-
-  if (form.age >= 75) {
-    score += 2
-    signals.push('Age is in a higher risk group.')
-  } else if (form.age >= 60) {
-    score += 1
-    signals.push('Age contributes to baseline risk.')
-  }
-
-  if (form.wbc >= 11) {
-    score += 2
-    signals.push('WBC suggests inflammation or infection.')
-  } else if (form.wbc > 8.5) {
-    score += 1
-    signals.push('WBC is mildly elevated.')
-  }
-
-  if (form.rbc < 4.0) {
-    score += 2
-    signals.push('RBC is low.')
-  } else if (form.rbc < 4.5) {
-    score += 1
-    signals.push('RBC is slightly low.')
-  }
-
-  if (form.time_step >= 7) {
-    score += 1
-    signals.push('Longer observation period indicates persistent tracking.')
-  }
-
-  let riskLevel = 'Low'
-  if (form.egfr < 30 || score >= 8) {
-    riskLevel = 'Critical'
-  } else if (score >= 6) {
-    riskLevel = 'High'
-  } else if (score >= 3) {
-    riskLevel = 'Moderate'
-  }
-
-  return {
-    riskLevel,
-    riskState: riskLevel === 'Low' ? 'Not at risk' : 'At risk',
-    score: Math.min(score * 10, 100),
-    signals,
-  }
-}
 
 export default function Dashboard() {
   const [form, setForm] = useState(initialForm)
   const [refreshToken, setRefreshToken] = useState(0)
-  const [assessment, setAssessment] = useState(() => ({
-    ...assessCkdRisk(initialForm),
-    source: 'local-fallback',
-  }))
+  const [assessment, setAssessment] = useState(null)
   const [isAssessing, setIsAssessing] = useState(false)
-  const [assessmentSource, setAssessmentSource] = useState('local-fallback')
+  const [assessmentSource, setAssessmentSource] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -161,19 +71,15 @@ export default function Dashboard() {
           input: normalizedForm,
           predictedAt: new Date().toISOString(),
         })
-      } catch {
-        const fallbackResult = {
-          ...assessCkdRisk(normalizedForm),
-          source: 'local-fallback',
-        }
-
-        setAssessment(fallbackResult)
-        setAssessmentSource('local-fallback')
-        saveLatestPrediction({
-          prediction: fallbackResult,
-          input: normalizedForm,
-          predictedAt: new Date().toISOString(),
+      } catch (error) {
+        setAssessment({
+          riskLevel: 'Error',
+          riskState: 'Connection Failed',
+          score: 0,
+          signals: ['Failed to connect to the backend server. Please ensure the backend is running.'],
+          isError: true,
         })
+        setAssessmentSource('error')
       } finally {
         setIsAssessing(false)
       }
@@ -318,46 +224,60 @@ export default function Dashboard() {
               <Loader2 className="animate-spin" size={48} color="#0f766e" />
               <p style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>Processing your risk...</p>
             </div>
+          ) : assessment ? (
+            assessment.isError ? (
+              <div className="assessment-error-state" style={{ padding: '40px 20px', textAlign: 'center', color: '#ef4444' }}>
+                <ShieldAlert size={48} style={{ margin: '0 auto 16px', color: '#ef4444' }} />
+                <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: '600' }}>{assessment.riskState}</h3>
+                <p style={{ margin: 0, fontSize: '14px' }}>{assessment.signals[0]}</p>
+              </div>
+            ) : (
+              <>
+                <div className={`verdict verdict-${assessment.riskLevel?.toLowerCase()}`}>
+                  {assessment.riskLevel === 'Low' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
+                  <div>
+                    <strong>{assessment.riskState}</strong>
+                    <span>{assessment.riskLevel} CKD risk</span>
+                  </div>
+                </div>
+
+                <div className="risk-meter-block">
+                  <div className="risk-meter-label">
+                    <span>Risk score</span>
+                    <strong>{assessment.score}%</strong>
+                  </div>
+                  <div className="risk-meter-track">
+                    <div className={`risk-meter-fill verdict-${assessment.riskLevel?.toLowerCase()}`} style={{ width: `${assessment.score}%` }} />
+                  </div>
+                </div>
+
+                <div className="result-summary">
+                  <div className="result-badge">
+                    {assessment.riskLevel === 'Low' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
+                    <span>{assessment.riskLevel}</span>
+                  </div>
+
+                  <div className="result-text">
+                    <h3>{assessment.signals?.length ? 'Key signals' : 'No major CKD signals detected'}</h3>
+                    {assessment.signals?.length ? (
+                      <ul>
+                        {assessment.signals.map((signal) => (
+                          <li key={signal}>{signal}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>The current values do not cross the simple risk thresholds in this dashboard.</p>
+                    )}
+                  </div>
+                </div>
+              </>
+            )
           ) : (
-            <>
-              <div className={`verdict verdict-${assessment.riskLevel.toLowerCase()}`}>
-                {assessment.riskLevel === 'Low' ? <CheckCircle2 size={24} /> : <ShieldAlert size={24} />}
-                <div>
-                  <strong>{assessment.riskState}</strong>
-                  <span>{assessment.riskLevel} CKD risk</span>
-                </div>
-              </div>
-
-              <div className="risk-meter-block">
-                <div className="risk-meter-label">
-                  <span>Risk score</span>
-                  <strong>{assessment.score}%</strong>
-                </div>
-                <div className="risk-meter-track">
-                  <div className={`risk-meter-fill verdict-${assessment.riskLevel.toLowerCase()}`} style={{ width: `${assessment.score}%` }} />
-                </div>
-              </div>
-
-              <div className="result-summary">
-                <div className="result-badge">
-                  {assessment.riskLevel === 'Low' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
-                  <span>{assessment.riskLevel}</span>
-                </div>
-
-                <div className="result-text">
-                  <h3>{assessment.signals.length ? 'Key signals' : 'No major CKD signals detected'}</h3>
-                  {assessment.signals.length ? (
-                    <ul>
-                      {assessment.signals.map((signal) => (
-                        <li key={signal}>{signal}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>The current values do not cross the simple risk thresholds in this dashboard.</p>
-                  )}
-                </div>
-              </div>
-            </>
+            <div className="assessment-empty-state" style={{ padding: '60px 20px', textAlign: 'center', color: '#64748b' }}>
+              <Activity size={48} style={{ margin: '0 auto 16px', color: '#94a3b8' }} />
+              <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: '500' }}>No Assessment Yet</h3>
+              <p style={{ margin: 0, fontSize: '14px' }}>Enter patient values and click Assess Risk to see results.</p>
+            </div>
           )}
         </aside>
       </div>
