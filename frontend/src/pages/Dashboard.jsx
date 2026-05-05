@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Activity, AlertTriangle, CheckCircle2, ShieldAlert, Loader2 } from 'lucide-react'
+import { Activity, AlertTriangle, CheckCircle2, ShieldAlert, Loader2, FlaskConical } from 'lucide-react'
 import { predictRisk } from '../lib/ckdApi'
 import { saveLatestPrediction } from '../lib/predictionStore'
 import './Dashboard.css'
+
+function getLocalCkdStage(egfr) {
+  if (egfr >= 90) return { stage: 'G1', label: 'Stage G1', description: 'Normal or high kidney function (eGFR ≥ 90)', color: 'stage-g1' }
+  if (egfr >= 60) return { stage: 'G2', label: 'Stage G2', description: 'Mildly decreased kidney function (eGFR 60–89)', color: 'stage-g2' }
+  if (egfr >= 45) return { stage: 'G3a', label: 'Stage G3a', description: 'Mildly to moderately decreased (eGFR 45–59)', color: 'stage-g3a' }
+  if (egfr >= 30) return { stage: 'G3b', label: 'Stage G3b', description: 'Moderately to severely decreased (eGFR 30–44)', color: 'stage-g3b' }
+  if (egfr >= 15) return { stage: 'G4', label: 'Stage G4', description: 'Severely decreased kidney function (eGFR 15–29)', color: 'stage-g4' }
+  return { stage: 'G5', label: 'Stage G5', description: 'Kidney failure / End-stage renal disease (eGFR < 15)', color: 'stage-g5' }
+}
 
 const initialForm = {
   time_step: 1,
@@ -250,6 +259,24 @@ export default function Dashboard() {
                     <div className={`risk-meter-fill verdict-${assessment.riskLevel?.toLowerCase()}`} style={{ width: `${assessment.score}%` }} />
                   </div>
                 </div>
+
+                {/* CKD Stage Block */}
+                {(() => {
+                  const stageData = assessment.ckdStage
+                    ? { stage: assessment.ckdStage, label: assessment.ckdStageLabel, description: assessment.ckdStageDescription, color: `stage-${assessment.ckdStage.toLowerCase()}` }
+                    : getLocalCkdStage(form.egfr)
+                  return (
+                    <div className={`ckd-stage-block ${stageData.color}`}>
+                      <div className="ckd-stage-icon">
+                        <FlaskConical size={22} />
+                      </div>
+                      <div className="ckd-stage-info">
+                        <span className="ckd-stage-tag">{stageData.label}</span>
+                        <p className="ckd-stage-desc">{stageData.description}</p>
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 <div className="result-summary">
                   <div className="result-badge">
